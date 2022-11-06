@@ -23,7 +23,7 @@ module.exports.register = async (req, res) => {
 
     // 도큐먼트 저장
     await user.save();
-    return res.send(user);
+    return res.status(200).send(user);
   } catch (err) {
     return res.status(500).send(err);
   }
@@ -48,6 +48,11 @@ module.exports.login = async (req, res) => {
       req.session.user = user._id; //user는 user._id를 의미한다
       req.session.userId = user.userId;
       req.session.isLoggedIn = true;
+      // 자동 로그인
+      if (req.body.persist) {
+        //쿠키의 maxAge를 1년으로 설정한다.
+        req.session.cookie["maxAge"] = 365 * 24 * 60 * 60 * 1000;
+      }
       req.session.save(() => {
         return res.status(200).send(user);
       });
