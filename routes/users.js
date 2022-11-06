@@ -1,15 +1,15 @@
-// routes>users.js
+// routes > users.js
 const express = require("express");
 const router = express.Router();
 const users = require("../controllers/users");
 
-// Read users
-router.get("/:userId?", users.find);
+// `POSTS /users` routes to users.register
+router.post("/", users.register);
 
-// Create user
-router.post("/", users.create);
+// `POST /users/login` routes to users.login
+router.post("/login", users.login);
 
-// Delete user
-router.delete("/:userId", users.remove);
+// `GET /users/logout` routes to users.logout
+router.get("/logout", users.logout);
 
 module.exports = router;
