@@ -37,11 +37,15 @@ module.exports.login = async (req, res) => {
       return res.status(404).send({ message: "존재하지 않는 ID입니다." });
 
     // 비밀번호 비교
-    if (user.password != req.body.password)
-      return res.status(409).send({ message: "비밀번호가 일치하지 않습니다." });
-
-    // 로그인 성공
-    return res.send(user);
+    user.comparePassword(req.body.password, (err, isMatch) => {
+      if (err) throw err;
+      if (!isMatch)
+        return res
+          .status(409)
+          .send({ message: "비밀번호가 일치하지 않습니다." });
+      // 로그인 성공
+      return res.send(user);
+    });
   } catch (err) {
     return res.status(500).send(err);
   }
