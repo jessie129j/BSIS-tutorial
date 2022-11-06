@@ -1,0 +1,8 @@
+{
+  "name": "BSIS",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jessie129j/BSIS-tutorial.git",
+  "author": "jessie129j@gmail.com <jessie129j@gmail.com>",
+  "license": "MIT"
+}
