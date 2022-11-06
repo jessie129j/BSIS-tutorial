@@ -43,8 +43,14 @@ module.exports.login = async (req, res) => {
         return res
           .status(409)
           .send({ message: "비밀번호가 일치하지 않습니다." });
-      // 로그인 성공
-      return res.send(user);
+
+      // 세션에 저장하고 반환
+      req.session.user = user._id; //user는 user._id를 의미한다
+      req.session.userId = user.userId;
+      req.session.isLoggedIn = true;
+      req.session.save(() => {
+        return res.status(200).send(user);
+      });
     });
   } catch (err) {
     return res.status(500).send(err);
@@ -52,6 +58,23 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.logout = async (req, res) => {
-  // 로그아웃 성공
-  return res.send();
+  try {
+    // 세션 삭제하고 반환
+    console.log(`debug: user(${req.user._id}) is trying to logout`);
+    req.session.destroy((err) => {
+      if (err) throw err;
+      return res.clearCookie("connect.sid").status(200).send();
+    });
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+};
+
+module.exports.current = async (req, res) => {
+  try {
+    const user = req.user;
+    return res.status(200).send(user);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 };
