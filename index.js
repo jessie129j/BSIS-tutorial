@@ -1,14 +1,10 @@
-//index.js
-const http = require("http");
+// index.js
+const express = require("express");
 
-const app = http.createServer((req, res) => {
-  if (req.url === "/") {
-    html = `hello world`;
-  } else {
-    return res.writeHead(404);
-  }
-  res.writeHead(200);
-  res.end(html);
+const app = express();
+
+app.get("/", (req, res) => {
+  return res.send("Hello World!");
 });
 
 app.listen(5000, function () {
