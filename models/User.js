@@ -1,6 +1,7 @@
-// models > User.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const secretToken = "secretToken"; // 숨겨져야 하는 정보
 
 const userSchema = mongoose.Schema({
   userId: {
@@ -36,8 +37,23 @@ userSchema.pre("save", function (next) {
 userSchema.methods.comparePassword = function (plainPassword, cb) {
   const user = this;
   bcrypt.compare(plainPassword, user.password, function (err, isMatch) {
-    if (err) cb(err);
-    cb(null, isMatch);
+    if (err) return cb(err);
+    return cb(null, isMatch);
+  });
+};
+
+// JWT를 생성한다.
+userSchema.methods.generateToken = function (cb) {
+  const user = this;
+  const payload = { _id: user._id, userId: user.userId };
+  const token = jwt.sign(payload, secretToken);
+  return token;
+};
+
+// JWT를 복호화하여 유저 정보를 확인한다.
+userSchema.statics.decodeToken = function (token, cb) {
+  jwt.verify(token, secretToken, function (err, decoded) {
+    cb(null, decoded);
   });
 };
 

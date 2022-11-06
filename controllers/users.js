@@ -43,8 +43,9 @@ module.exports.login = async (req, res) => {
         return res
           .status(409)
           .send({ message: "비밀번호가 일치하지 않습니다." });
-      // 로그인 성공
-      return res.send(user);
+
+      const token = user.generateToken();
+      return res.cookie("x_auth", token).status(200).send(user);
     });
   } catch (err) {
     return res.status(500).send(err);
@@ -52,6 +53,10 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.logout = async (req, res) => {
-  // 로그아웃 성공
-  return res.send();
+  try {
+    console.log(req.user, "is trying to logout");
+    return res.clearCookie("x_auth").status(200).send();
+  } catch (err) {
+    return res.status(500).send(err);
+  }
 };
