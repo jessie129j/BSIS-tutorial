@@ -1,5 +1,12 @@
 // index.js
 const express = require("express");
+const mongoose = require("mongoose");
+const url = "mongodb://localhost:27017/BSIS";
+
+mongoose
+  .connect(url)
+  .then(() => console.log("MongoDB connection is made."))
+  .catch((err) => console.log(err));
 
 const app = express();
 app.use(express.json());

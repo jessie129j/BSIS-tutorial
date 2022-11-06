@@ -6,6 +6,7 @@
   "author": "jessie129j@gmail.com <jessie129j@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongoose": "^6.7.1"
   }
 }

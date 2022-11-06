@@ -1,6 +1,11 @@
 // models > User.js
-module.exports = [
-  { userId: "hihihi", password: "password12*", info: "hi!" },
-  { userId: "bybyby", password: "password12*", info: "by!" },
-  { userId: "gogogo", password: "password12*", info: "go!" },
-];
+const mongoose = require("mongoose");
+
+const userSchema = mongoose.Schema({
+  userId: String,
+  password: String,
+  info: String,
+});
+
+const User = mongoose.model("User", userSchema);
+module.exports = User;

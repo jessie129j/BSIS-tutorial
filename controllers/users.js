@@ -1,38 +1,56 @@
 // controllers > users.js
 const User = require("../models/User");
 
-module.exports.create = (req, res) => {
-  const { userId, password, info } = req.body;
-  User.push({ userId, password, info });
-  return res.send(User);
-};
+module.exports.create = async (req, res) => {
+  try {
+    const { userId, password, info } = req.body;
 
-module.exports.find = (req, res) => {
-  const { userId } = req.params;
+    // 새로운 User 도큐먼트를 생성한다.
+    const user = new User({ userId, password, info });
 
-  // req.params.userId가 있을 시 해당 유저 정보를 리턴한다.
-  if (userId) {
-    for (let i = 0; i < User.length; i++) {
-      if (User[i].userId == userId) {
-        return res.send(User[i]);
-      }
-    }
-    // 해당 유저 정보가 존재하지 않으면 404를 리턴한다.
-    return res.status(404).send("user not found");
+    // 도큐먼트를 저장한다.
+    await user.save();
+
+    return res.send(user);
+  } catch (err) {
+    return res.status(500).send(err);
   }
-  // req.params.userId가 없으면 모든 유저 정보를 리턴한다.
-  return res.send(User);
 };
 
-module.exports.remove = (req, res) => {
-  for (let i = 0; i < User.length; i++) {
+module.exports.find = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // req.params.userId가 있을 시 해당 유저 정보를 리턴한다.
+    if (userId) {
+      // userId가 일치하는 User 도큐먼트를 하나 찾는다.
+      const user = await User.findOne({ userId });
+
+      // 해당 유저 정보가 존재하지 않으면 404를 리턴한다.
+      if (!user) return res.status(404).send("user not found");
+      return res.send(user);
+    }
+    // req.params.userId가 없으면 모든 유저 정보를 리턴한다.
+    const users = await User.find({});
+    return res.send(users);
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+};
+
+module.exports.remove = async (req, res) => {
+  try {
+    const { userId } = req.params;
     // userId를 가진 유저 정보를 찾는다.
-    if (User[i].userId == req.params.userId) {
-      // 유저 정보를 삭제하고 남은 유저들의 정보를 리턴한다.
-      User.splice(i, 1);
-      return res.send(User);
-    }
+    const user = await User.findOne({ userId });
+
+    // userId를 가진 유저가 없으면 404를 리턴한다.
+    if (!user) return res.status(404).send("user not found");
+
+    // 유저 정보를 삭제한다.
+    await user.remove();
+    return res.send();
+  } catch (err) {
+    return res.status(500).send(err);
   }
-  // userId를 가진 유저가 없으면 404를 리턴한다.
-  return res.status(404).send("user not found");
 };
