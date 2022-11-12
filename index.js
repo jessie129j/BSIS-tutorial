@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 var session = require("express-session");
 const FileStore = require("session-file-store")(session);
+const passport = require("passport");
+const passportConfig = require("./passport");
 
 mongoose
   .connect(process.env["DB_URL"])
@@ -34,6 +36,11 @@ app.use(
     }),
   })
 );
+passportConfig(); // passport 설정
+
+//반드시 app.use(session(...)) 아래에 있어야 함
+app.use(passport.initialize()); // passport 설정 적용
+app.use(passport.session()); // request의 sid 쿠키로 세션을 deserialize함
 
 app.get("/", (req, res) => {
   return res.send("Hello World!");

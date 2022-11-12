@@ -1,12 +1,17 @@
+// middleware > auth.js
+
 exports.isLoggedIn = (req, res, next) => {
-  if (!req.session.isLoggedIn)
-    return res.status(403).send("you are not logged in");
-  req.user = { _id: req.session.user, userId: req.session.userId };
-  next();
+  if (req.isAuthenticated()) {
+    next();
+  } else {
+    res.status(403).send({ message: "You are not logged in." });
+  }
 };
 
 exports.isNotLoggedIn = (req, res, next) => {
-  if (req.session.isLoggedIn)
-    return res.status(403).send("you are already logged in");
-  next();
+  if (!req.isAuthenticated()) {
+    next();
+  } else {
+    res.status(403).send({ message: "You are already logged in." });
+  }
 };
